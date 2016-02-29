@@ -1,0 +1,26 @@
+<!doctype>
+<html ng-app="myApp" ng-controller="myCtrl">
+	<head>
+		<title>MSRM home</title>
+	</head>
+	<body>
+		<h1>MSRM</h1>
+		
+		<table>
+			<tr>
+				<th>Name</th>
+				<th>Email</th>
+				<th>number</th>
+			</tr>
+			<tr ng-repeat="contact in contactlist">
+				<td>{{ contact.name }}</td>
+				<td>{{ contact.email }}</td>
+				<td>{{ contact.number }}</td>
+			</tr>
+		</table>
+		
+		
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+		<script src="controllers/appcontroller.js"></script>
+	</body>
+</html>

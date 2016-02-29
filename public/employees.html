@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="myApp" ng-controller="myCtrl">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+		<meta charset="utf-8">
+		<title>Employees</title>
+		<meta name="generator" content="Bootply" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+		<link href="/css/bootstrap.min.css" rel="stylesheet">
+		<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet">
+		<!--[if lt IE 9]>
+			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
+		<![endif]-->
+		<link href="/css/styles.css" rel="stylesheet">
+		<link href="/css/datepickerStyle.css" rel="stylesheet">
+		 <link href="/css/simple-sidebar.css" rel="stylesheet">
+
+		<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		<style>
+			.results tr[visible='false'],
+			.no-result{
+			  display:none;
+			}
+			
+			.results tr[visible='true']{
+			  display:table-row;
+			}
+			#sidebar-wrapper{
+				background: #EEEEEE;
+			}
+			#page-content-wrapper
+			{
+				padding:0px;
+			}
+			
+			.sidebar-nav
+			{
+				background:#EEEEEE;
+			}
+			.jumbotron {
+				padding-top: 10px;
+				padding-bottom: 10px;
+				}
+			.sidebar-nav li {
+				text-indent: 10px;
+				line-height: 20px;
+			}
+			
+			.counter{
+			  padding:8px; 
+			  color:#ccc;
+			}
+			
+			#page-content-wrapper .container-fluid
+			{
+				background-color:#FFFFFF;
+			}
+			
+			.container-fluid
+			{
+				padding-left: 0px;
+				padding-right: 0px;
+			}
+			
+			.container-fluid .jumbotron {
+				padding-left: 0px;
+				padding-right: 0px;
+				padding-top: 0px;
+				height:100%;
+			}
+			
+			.jumbotron .form-control {
+				width:90%;
+				margin-left:10px;
+				margin-right:10px;
+			}
+			
+			.jumbotron input[type="checkbox"]{
+				margin: 4px 25px 0;
+			}
+			
+			
+			
+			.btn-lg, .btn-group-lg>.btn {
+				padding: 5px 7px;
+				font-size: 18px;
+				line-height: 1.3333333;
+				border-radius: 6px;
+			}
+			i{
+				cursor:pointer;
+			}
+			.green{
+			  color:#32CD32;
+			}
+			.defaultColor{
+			  color:#333333;
+			}
+			.main{ min-height:100%;}
+		</style>
+		
+	</head>
+	<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+			  <div class="container-fluid">
+				<div class="navbar-header">
+				  
+				  <a class="navbar-brand" href="#">Microsoft Resource Management</a>
+				</div>
+				<div class="navbar-collapse collapse">
+				  <ul class="nav navbar-nav navbar-right">
+					<li><a href="#">{{ username }}</a></li>
+					<li><a ng-click="logout()">Logout</a></li>
+				  </ul>
+				 <!-- <form class="navbar-form navbar-right">
+					<input type="text" class="form-control" ng-enter="SeachKeyword()" ng-model="searchParameter" placeholder="Search...">
+				  </form>-->
+				</div>
+			  </div>
+		</nav>
+ <div id="wrapper">
+		
+		
+		
+        <!-- Sidebar -->
+        <div id="sidebar-wrapper">
+			
+            <ul class="sidebar-nav">
+			
+			
+              
+			  
+			  <li>
+			    <div class="jumbotron" ng-show="tabID==1">
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Manager</label>
+					  
+					   <select class="form-control" ng-init="filterModel.ReportingManager='-1'" ng-model="filterModel.ReportingManager">
+						  <option value="-1">select</option>
+						  <option ng-repeat="manager in Managers | filter:{ Role: 5 }" value="{{manager.Name}}">{{manager.Name}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Role</label>
+					   <select class="form-control" ng-init="filterModel.Role='-1'" ng-model="filterModel.Role">
+						  <option value="-1">select</option>
+						  <option ng-repeat="option in roles" value="{{option._id}}">{{option.Name}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Project</label>
+					  <select class="form-control " ng-init="filterModel['ProjectName']='-1'" ng-model="filterModel['ProjectName']">
+						  <option value="-1">select</option>	
+						  <option ng-repeat="option in projectList" value="{{option.Name}}">{{option.Name}}</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+						  <div>
+								<label class="control-label">Security 101</label> 
+								<input class="pull-right" style="width:20px;height:20px;" ng-init="filterModel.Security101=true" ng-model="filterModel.Security101" type="checkbox" ng-model="contact.Security101"/>
+						  </div>
+						
+						  <div>
+							  <label class="control-label">Is active ?</label>
+							  <input style="width:20px;height:20px;" ng-model="filterModel.isActive" ng-init="filterModel.isActive=false" class="pull-right" type="checkbox"/>
+						  </div>
+					</div>
+					
+					<button class="btn btn-primary btn-lg btn-block" ng-click="filterEmployees()">Filter</button>
+				</div>
+				
+				<div class="jumbotron" ng-show="tabID==2">
+					
+					
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Type</label>
+					   <select class="form-control" ng-init="projectFilterModel.Type='-1'" ng-model="projectFilterModel.Type">
+						  <option value="-1">select</option>
+						  <option ng-repeat="group in ProjectTypes" value="{{group}}">{{group}}</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">MS Business Group</label>
+					   <select class="form-control" ng-init="projectFilterModel.MSBusinessGroup='-1'" ng-model="projectFilterModel.MSBusinessGroup">
+						  <option value="-1">select</option>
+						  <option ng-repeat="group in MsBusinessGroups" value="{{group}}">{{group}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Vendor PM Contact</label>
+					  <select class="form-control " ng-init="projectFilterModel.VendorPMContact='-1'" ng-model="projectFilterModel.VendorPMContact">
+						  <option value="-1">select</option>	
+						  <option ng-repeat="option in Managers | filter:{ Role: 5 }" value="{{option.Name}}">{{option.Name}}</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">MS BG FTE Contact</label>
+					  <select class="form-control " ng-init="projectFilterModel.MSBGFTEContact='-1'" ng-model="projectFilterModel.MSBGFTEContact">
+						  <option value="-1">select</option>	
+						  <option ng-repeat="option in MSBGFTEContact" value="{{option}}">{{option}}</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Start Date</label>
+					  
+					
+						  <input type="date" ng-model="projectFilterModel.StartDate"/>
+					 
+					</div>
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">End Date</label>
+					  
+					   <input type="date" ng-model="projectFilterModel.EndDate"/>
+					  
+					
+					 
+					</div>
+
+			
+					
+					<div class="form-group">
+						  <div>
+								<label class="control-label">Onboarding</label> 
+								<input class="pull-right" style="width:20px;height:20px" ng-init="projectFilterModel.OnboardingInCurrentMonth=true" ng-model="projectFilterModel.OnboardingInCurrentMonth" type="checkbox" />
+						  </div>
+					</div>
+					
+					<button class="btn btn-primary btn-lg btn-block" ng-click="filterProjects()">Filter</button>
+				</div>
+				
+				
+				 <div class="jumbotron" ng-show="tabID==3">
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Manager</label>
+					  
+					   <select class="form-control" ng-init="machineFilterModel.owner='-1'" ng-model="machineFilterModel.owner">
+						  <option value="-1">select</option>
+						  <option ng-repeat="manager in Managers" value="{{manager.Name}}">{{manager.Name}}</option>
+						</select>
+					</div>
+					
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Type</label>
+					  
+					   <select class="form-control" ng-init="machineFilterModel.type='-1'" ng-model="machineFilterModel.type">
+						  <option value="-1">select</option>
+						  <option ng-repeat="type in machineTypes" value="{{type}}">{{type}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Project</label>
+					  <select class="form-control " ng-init="machineFilterModel.project='-1'" ng-model="machineFilterModel.project">
+						  <option value="-1">select</option>	
+						  <option ng-repeat="option in projectList" value="{{option.Name}}">{{option.Name}}</option>
+						</select>
+					</div>
+					<div class="form-group">
+					  <label class="control-label" for="focusedInput">Serial Number</label>
+					  <input class="form-control" type="text" ng-model="machineFilterModel.serialNumber"/>
+					</div>
+					
+					
+					<div class="form-group">
+						  <div>
+								<label class="control-label">Bit locker enabled ?</label> 
+								<input class="pull-right" style="width:20px;height:20px;" ng-init="machineFilterModel.bitLockerStatus=true" ng-model="machineFilterModel.bitLockerStatus" type="checkbox" ng-model="contact.bitLockerStatus"/>
+						  </div>
+						
+						  <div>
+							  <label class="control-label">Is allocated ?</label>
+							  <input style="width:20px;height:20px;" ng-model="machineFilterModel.isAllocated" ng-init="machineFilterModel.isAllocated=true" class="pull-right" type="checkbox"/>
+						  </div>
+					</div>
+					
+					<button class="btn btn-primary btn-lg btn-block" ng-click="filterMachines()">Filter</button>
+				</div>
+				
+				
+			  </li>
+			  
+            
+			
+			
+            </ul>
+        </div>
+		
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+			
+            <div class="container-fluid">
+			
+			
+				<!-- Export Details Modal -->
+			
+				<div class="modal" id="exportDetailsModel">
+				  <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+						<h4 class="modal-title">Export data</h4>
+					  </div>
+					  <div class="modal-body">
+						
+						<div class="form-group">
+						  <div>
+								<label class="control-label">Employees</label>
+								<i ng-class="colorClass" class="fa fa-filter fa-2x pull-right"></i>
+						  </div>
+						
+						  <div>
+							  <label class="control-label">Projects</label>
+							  <i ng-class="projectColorClass" class="fa fa-filter fa-2x pull-right"></i>
+						  </div>
+						</div>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button class="btn btn-primary" ng-click="generateReport()" data-dismiss="modal"><i class="fa fa-wrench " ></i>&nbspExport</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+			
+			
+			
+			
+			
+            <a href="#menu-toggle" id="menu-toggle"><i class="fa fa-caret-left fa-2x"></i></a>
+                        <div class="col-sm-9 col-md-12 main">
+		  
+          <i class="fa fa-file-excel-o fa-2x pull-right" data-toggle="modal" data-target="#exportDetailsModel"></i>
+		  <ul class="nav nav-tabs">
+			  <li class="active" ng-click="activate(1)"><a href="#employeesTab" data-toggle="tab">Employees</a></li>
+			  <li ng-click="activate(2)"><a href="#projects" data-toggle="tab">Projects</a></li>
+			  <li ng-click="activate(3)"><a href="#Machines" data-toggle="tab">Machines</a></li>
+			  
+			</ul>
+			<div id="myTabContent" class="tab-content">
+			  <div class="tab-pane fade active in" id="employeesTab">
+				 <!--toggle sidebar button-->
+          <p class="visible-xs">
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas"><i class="glyphicon glyphicon-chevron-left"></i></button>
+          </p>
+          
+		  <br><br>
+		  
+		  <div class="form-group pull-right">
+					
+					<div style="float:left;margin-top:4px;margin-right:4px;">
+					<i ng-class="colorClass" ng-click="removeFilter()" class="fa fa-filter fa-2x pull-right"></i>
+					</div>
+					
+					<div style="float:left;margin-top:4px;margin-right:4px;">
+					<i class="fa fa-user-plus fa-2x pull-right" data-toggle="modal" ng-click="contact=''" data-target="#employeeDetailsModel"></i> 
+					</div>
+					<div style="float:left;">
+					<input type="text" class="search form-control" placeholder="What you looking for?">
+					</div>
+				</div>
+		  
+		  <h1 class="page-header">
+            Employees
+            
+          </h1>
+		
+			  
+			
+		  
+				  <div class="modal" id="employeeDetailsModel">
+				  <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+						<h4 class="modal-title">Employee details</h4>
+					  </div>
+					  <div class="modal-body">
+						<div class="form-group">
+						   <label class="control-label">Name</label>
+						  <div >
+							<input class="form-control " type="text" ng-model="contact.Name" />
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label class="control-label">Alias</label>
+						  <div>
+							<input class="form-control " type="text" ng-model="contact.Alias"/>
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label class="control-label">Reporting Manager</label>
+						  <div >
+							<select class="form-control " ng-model="contact.ReportingManager">
+							  <option ng-repeat="manager in Managers" value="{{manager.Name}}">{{manager.Name}}</option>
+							</select>
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label class=" control-label">Role</label>
+						  <div >
+							<select class="form-control " ng-model="contact.Role">
+							  <option ng-repeat="option in roles" value="{{option._id}}">{{option.Name}}</option>
+							</select>
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label class="control-label">Project</label>
+						  <div >
+							 <select class="form-control " ng-model="contact.ProjectName">
+							  <option value="-1">select</option>	
+							  <option ng-repeat="option in projects" value="{{option.Name}}">{{option.Name}}</option>
+							</select>
+							
+							
+							
+							
+						  </div>
+						</div>
+						
+						
+						<div class="form-group">
+						  <div>
+								<label class="control-label">Security 101</label>
+								<input type="checkbox" ng-model="contact.Security101"/>
+						  </div>
+						
+						  <div>
+							  <label class="control-label">Is active ?</label>
+							  <input type="checkbox" ng-model="contact.isActive"/>
+						  </div>
+						</div>
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button ng-if="contact._id==null" class="btn btn-primary" ng-click="addEmployee()" data-dismiss="modal"><i class="fa fa-user-plus" ></i>&nbspAdd</button>
+						<button ng-if="contact._id!=null" class="btn btn-primary" ng-click="updateEmployee(contact._id)" data-dismiss="modal"><i class="fa fa-wrench " ></i>&nbspUpdate</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+		  
+				
+		
+			
+			
+				  <div class="table-responsive">
+				  
+				  <div>
+			<a data-toggle="offcanvas" data-target="#sidebar" data-canvas="body" data-autohide="false">CLICK</a> 
+		</div>
+				  
+					<table class="table results">
+					  <thead>
+						
+					  
+						<tr>
+						  
+							<th>Name</th>
+							<th>Alias</th>
+							<th>Reporting Manager</th>
+						  
+							<th>Project Name</th>
+							<th>Security101</th>
+						  
+						  
+						  <th>Action</th>
+						</tr>
+					  </thead>
+					  <tbody id="EmployeeTable">
+						<tr ng-repeat="contact in contactlist ">
+						
+						<td>{{ contact.Name }}</td>
+						<td>{{ contact.Alias }}</td>
+						<td>{{ contact['ReportingManager'] }}</td>
+						<td>{{ contact['ProjectName'] }}</td>
+						
+						<td>{{ contact['Security101']  ? '100%' : '0' }}</td>
+						<td><i style="cursor:pointer;display:inline-block" class="fa fa-pencil-square-o fa-2x" data-toggle="modal" data-target="#employeeDetailsModel" ng-click="editEmployee(contact._id)"></i> 
+							<i style="cursor:pointer;display:inline-block" class="fa fa-user-times fa-2x" ng-click="deleteEmployee(contact._id)"></i>
+						</td>
+					</tr>
+					  </tbody>
+					</table>
+				  </div>
+			  </div>
+			  <div class="tab-pane fade" id="projects">
+				
+					<p class="visible-xs">
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas"><i class="glyphicon glyphicon-chevron-left"></i></button>
+          </p>
+          
+		  <br><br>
+		  
+		  <div class="form-group pull-right">
+					
+					<div style="float:left;margin-top:4px;margin-right:4px;">
+					<i ng-class="projectColorClass" ng-click="removeProjectFilter()" class="fa fa-filter fa-2x pull-right"></i>
+					</div>
+					
+					<div style="float:left;margin-top:4px;margin-right:4px;">
+					<i class="fa fa-user-plus fa-2x pull-right" data-toggle="modal" ng-click="project=''" data-target="#projectDetailsModel"></i> 
+					</div>
+					<div style="float:left;">
+					<input type="text" class="search form-control" placeholder="What you looking for?">
+					</div>
+				</div>
+		  
+		  <h1 class="page-header">
+            Projects
+            
+          </h1>
+		
+			  
+			
+		  
+				  <div class="modal" id="projectDetailsModel">
+				  <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+						<h4 class="modal-title">Project details</h4>
+					  </div>
+					  <div class="modal-body">
+						<div class="form-group">
+						   <label class="control-label">Name</label>
+						  <div >
+							<input class="form-control " type="text" ng-model="project.Name" />
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label class="control-label">Type</label>
+						  <div>
+							<select class="form-control " ng-model="project.Type">
+							  <option value="-1">select</option>	
+							  <option ng-repeat="option in ProjectTypes" value="{{option}}">{{option}}</option>
+							</select>
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label class="control-label">MS Business Group</label>
+						  <div >
+							<select class="form-control " ng-model="project.MSBusinessGroup">
+							  <option ng-repeat="manager in MsBusinessGroups" value="{{manager}}">{{manager}}</option>
+							</select>
+						  </div>
+						</div>
+						<div class="form-group">
+						<div style="display:inline-block">
+							<label class=" control-label">Start date</label>	
+						 	<input type="date" class="form-control" ng-model="project.StartDate">
+						  </div>
+						  <div style="display:inline-block" class="pull-right">
+							<label class="control-label">End date</label>
+							<input type="date" class="form-control" ng-model="project.EndDate">
+						  </div>
+						</div>
+						
+						
+						
+						
+						<div class="form-group">
+						  <label class="control-label">Vendor PM Contact</label>
+						  <div >
+							 <select class="form-control " ng-model="project.VendorPMContact">
+							  <option value="-1">select</option>	
+							  <option ng-repeat="option in Managers | filter: { Role:5 }" value="{{option.Name}}">{{option.Name}}</option>
+							</select>
+						  </div>
+						</div>
+						
+						
+						<div class="form-group">
+						  <label class="control-label">MS BG FTE Contact</label>
+						  <div >
+							 <select class="form-control " ng-model="project.MSBGFTEContact">
+							  <option value="-1">select</option>	
+							  <option ng-repeat="option in MSBGFTEContact" value="{{option}}">{{option}}</option>
+							</select>
+						  </div>
+						</div>
+						
+						
+						
+						<div class="form-group">
+						  <div style="display:inline-block">
+								<label class="control-label">Headcount</label>
+								<input class="form-control" type="number" ng-model="project.Headcount"/>
+						  </div>
+						
+						  <div class="pull-right" style="display:inline-block">
+							  <label class="control-label">Forecast</label>
+							  <input class="form-control" type="number" ng-model="project.Forecast"/>
+						  </div>
+						</div>
+						
+						<div class="form-group">
+						  <label class="control-label">Onboarding In Current Month</label>
+						  <input class="pull-right form-control" style="width:20px;height:20px" ng-model="project.OnboardingInCurrentMonth" type="checkbox">
+						</div>
+						
+						
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button ng-if="project._id==null" class="btn btn-primary" ng-click="addProject()" data-dismiss="modal"><i class="fa fa-user-plus" ></i>&nbspAdd</button>
+						<button ng-if="project._id!=null" class="btn btn-primary" ng-click="updateProject(project._id)" data-dismiss="modal"><i class="fa fa-wrench " ></i>&nbspUpdate</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+		  
+				
+		
+			
+			
+				  <div class="table-responsive">
+				  
+				  
+				  
+					<table class="table results">
+					  <thead>
+						
+					  
+						<tr>
+						  
+							<th>Name</th>
+							<th>Type</th>
+							<th>Group</th>
+						  
+							<th>Start</th>
+							<th>End</th>
+							
+							<th>Onboarding</th>
+							<th>Vendor PM</th>
+							<th>MS BG FTE</th>
+							<th>Headcount</th>
+							<th>Forecast</th>
+						  
+						  
+						  <th>Action</th>
+						</tr>
+					  </thead>
+					  <tbody id="EmployeeTable">
+						<tr ng-repeat="project in projects ">
+						
+						<td>{{ project.Name }}</td>
+						<td>{{ project.Type }}</td>
+						<td>{{ project.MSBusinessGroup }}</td>
+						<td>{{ project.StartDate |  date:'MM/dd/yyyy' }}</td>
+						
+						<td>{{ project.EndDate|  date:'MM/dd/yyyy' }}</td>
+						
+						<td>{{ project.OnboardingInCurrentMonth }}</td>
+						<td>{{ project.VendorPMContact }}</td>
+						<td>{{ project.MSBGFTEContact }}</td>
+						<td>{{ project.Headcount }}</td>
+						<td>{{ project.Forecast }}</td>
+						
+						<td><i style="cursor:pointer;display:inline-block" class="fa fa-pencil-square-o fa-2x" data-toggle="modal" data-target="#projectDetailsModel" ng-click="editProject(project._id)"></i> 
+							<i style="cursor:pointer;display:inline-block" class="fa fa-user-times fa-2x" ng-click="deleteProject(contact._id)"></i>
+						</td>
+					</tr>
+					  </tbody>
+					</table>
+				  </div>
+				
+				
+			  </div>
+			  
+			  
+			  
+			  
+			  
+			  <div class="tab-pane fade" id="Machines">
+				
+					<p class="visible-xs">
+            <button type="button" class="btn btn-primary btn-xs" data-toggle="offcanvas"><i class="glyphicon glyphicon-chevron-left"></i></button>
+          </p>
+          
+		  <br><br>
+		  
+		  <div class="form-group pull-right">
+					
+					<div style="float:left;margin-top:4px;margin-right:4px;">
+					<i ng-class="machineColorClass" ng-click="removeMachineFilter()"  class="fa fa-filter fa-2x pull-right"></i>
+					</div>
+					
+					<div style="float:left;margin-top:4px;margin-right:4px;">
+					<i class="fa fa-user-plus fa-2x pull-right" data-toggle="modal" ng-click="machine=''" data-target="#machineDetailsModel"></i> 
+					</div>
+					<div style="float:left;">
+					<input type="text" class="searchMachine form-control" placeholder="What you looking for?">
+					</div>
+				</div>
+		  
+		  <h1 class="page-header">
+            Machines
+            
+          </h1>
+		
+			  
+			
+		  
+				  <div class="modal" id="machineDetailsModel">
+				  <div class="modal-dialog">
+					<div class="modal-content">
+					  <div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+						<h4 class="modal-title">Machine details</h4>
+					  </div>
+					  <div class="modal-body">
+						<div class="form-group">
+						   <label class="control-label">Owner</label>
+						  <div >
+							<select class="form-control " ng-model="machine.owner" >
+							  <option ng-repeat="option in EmployeesData" value="{{option.Name}}">{{option.Name}} ({{option.Alias}})</option>
+							</select>
+						  </div>
+						</div>
+						<div class="form-group">
+						  <label class="control-label">Machine Type</label>
+						  <div>
+							<select class="form-control " ng-model="machine.type">
+							  <option ng-repeat="option in machineTypes" value="{{option}}">{{option}}</option>
+							</select>
+						  </div>
+						</div>
+						
+						<div class="form-group" ng-hide="machine.type == 'Tablets'|| machine.type == 'Phones'">
+						  <label class="control-label">Machine Type</label>
+						  <div>
+							<input type="checkbox" ng-model="machine.bitLockerStatus" ng-init="machine.bitLockerStatus=false"/>
+						  </div>
+						</div>
+						
+						<div class="form-group">
+						  <label class="control-label">Machine Serial Number / Id</label>
+						  <div>
+							<input type="text" class="form-control" ng-model="machine.serialNumber"/>
+						  </div>
+						</div>
+						
+						<div class="form-group">
+						  <label class="control-label">Project</label>
+						  <div >
+							<select class="form-control " ng-model="machine.project">
+							  <option ng-repeat="proj in projectList" value="{{proj.Name}}">{{proj.Name}}</option>
+							</select>
+						  </div>
+						</div>
+						<div class="form-group">
+						<div style="display:inline-block">
+							<label class=" control-label">Approval date</label>	
+						 	<input type="date" class="form-control" ng-model="machine.approvalDate">
+						  </div>
+						  <div style="display:inline-block" class="pull-right">
+							<label class="control-label">Approval End date</label>
+							<input type="date" class="form-control" ng-model="machine.approvalEndDate">
+						  </div>
+						</div>
+						
+						
+						
+						
+						
+						
+						
+					  </div>
+					  <div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+						<button ng-if="machine._id==null" class="btn btn-primary" ng-click="addMachine()" data-dismiss="modal"><i class="fa fa-user-plus" ></i>&nbspAdd</button>
+						<button ng-if="machine._id!=null" class="btn btn-primary" ng-click="updateMachine(machine._id)" data-dismiss="modal"><i class="fa fa-wrench " ></i>&nbspUpdate</button>
+					  </div>
+					</div>
+				  </div>
+				</div>
+		  
+				
+		
+			
+			
+				  <div class="table-responsive">
+				  
+				  
+				  
+					<table class="table results">
+					  <thead>
+						
+					  
+						<tr>
+						  
+							<th>Owner</th>
+							<th>Type</th>
+							<th>Bitlocker status</th>
+							<th>Number</th>
+							<th>Project</th>
+							<th>Approval date</th>
+							<th>Approval end date</th>
+							
+						  
+						  
+						  <th>Action</th>
+						</tr>
+					  </thead>
+					  <tbody id="EmployeeTable">
+						<tr ng-repeat="machine in machines ">
+						
+						<td>{{ machine.owner }}</td>
+						<td>{{ machine.type }}</td>
+						<td>{{ machine.bitLockerStatus ? "Enabled" : "N/A"}} </td>
+						<td>{{ machine.serialNumber }}</td>
+						<td>{{ machine.project }}</td>
+						
+						<td>{{ machine.approvalDate |  date:'MM/dd/yyyy' }}</td>
+						
+						<td>{{ machine.approvalEndDate }}</td>
+					
+						
+						<td><i style="cursor:pointer;display:inline-block" class="fa fa-pencil-square-o fa-2x" data-toggle="modal" data-target="#machineDetailsModel" ng-click="editMachine(machine._id)"></i> 
+							<i style="cursor:pointer;display:inline-block" class="fa fa-user-times fa-2x" ng-click="deleteProject(contact._id)"></i>
+						</td>
+					</tr>
+					  </tbody>
+					</table>
+				  </div>
+				
+				
+			  </div>
+			  
+			
+			</div>
+		  
+		  
+         
+		  
+
+         
+      </div><!--/row-->
+                        
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+
+<footer>
+  <p class="pull-right">©2016 Company</p>
+</footer>
+        
+	<!-- script references -->
+		<script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+		<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.2/jquery.min.js"></script>
+		
+		<script src="http://code.jquery.com/ui/1.10.2/jquery-ui.js"></script>
+		
+		<script src="/js/bootstrap.min.js"></script>
+		<script src="/js/scripts.js"></script>
+		<script src="/controllers/appcontroller.js"></script>
+		
+		<script src="/js/bootstrap.min.js"></script>
+
+		<!-- Menu Toggle Script -->
+		<script>
+		$("#menu-toggle").click(function(e) {
+			e.preventDefault();
+			$("#wrapper").toggleClass("toggled");
+		});
+		</script>
+		
+		
+		<script>
+		
+		$.fn.pageMe = function(opts){
+		var $this = this,
+			defaults = {
+				perPage: 7,
+				showPrevNext: false,
+				hidePageNumbers: false
+			},
+			settings = $.extend(defaults, opts);
+		
+		var listElement = $this;
+		var perPage = settings.perPage; 
+		var children = listElement.children();
+		var pager = $('.pager');
+		
+		if (typeof settings.childSelector!="undefined") {
+			children = listElement.find(settings.childSelector);
+		}
+		
+		if (typeof settings.pagerSelector!="undefined") {
+			pager = $(settings.pagerSelector);
+		}
+		
+		var numItems = children.size();
+		var numPages = Math.ceil(numItems/perPage);
+
+		pager.data("curr",0);
+		
+		if (settings.showPrevNext){
+			$('<li><a href="#" class="prev_link">«</a></li>').appendTo(pager);
+		}
+		
+		var curr = 0;
+		while(numPages > curr && (settings.hidePageNumbers==false)){
+			$('<li><a href="#" class="page_link">'+(curr+1)+'</a></li>').appendTo(pager);
+			curr++;
+		}
+		
+		if (settings.showPrevNext){
+			$('<li><a href="#" class="next_link">»</a></li>').appendTo(pager);
+		}
+		
+		pager.find('.page_link:first').addClass('active');
+		pager.find('.prev_link').hide();
+		if (numPages<=1) {
+			pager.find('.next_link').hide();
+		}
+		pager.children().eq(1).addClass("active");
+		
+		children.hide();
+		children.slice(0, perPage).show();
+		
+		pager.find('li .page_link').click(function(){
+			var clickedPage = $(this).html().valueOf()-1;
+			goTo(clickedPage,perPage);
+			return false;
+		});
+		pager.find('li .prev_link').click(function(){
+			previous();
+			return false;
+		});
+		pager.find('li .next_link').click(function(){
+			next();
+			return false;
+		});
+		
+		function previous(){
+			var goToPage = parseInt(pager.data("curr")) - 1;
+			goTo(goToPage);
+		}
+		 
+		function next(){
+			goToPage = parseInt(pager.data("curr")) + 1;
+			goTo(goToPage);
+		}
+		
+		function goTo(page){
+			var startAt = page * perPage,
+				endOn = startAt + perPage;
+			
+			children.css('display','none').slice(startAt, endOn).show();
+			
+			if (page>=1) {
+				pager.find('.prev_link').show();
+			}
+			else {
+				pager.find('.prev_link').hide();
+			}
+			
+			if (page<(numPages-1)) {
+				pager.find('.next_link').show();
+			}
+			else {
+				pager.find('.next_link').hide();
+			}
+			
+			pager.data("curr",page);
+			pager.children().removeClass("active");
+			pager.children().eq(page+1).addClass("active");
+		
+		}
+	};
+		
+		
+		$(function(){
+			
+			$('#EmployeeTable').pageMe({pagerSelector:'#myPager',showPrevNext:true,hidePageNumbers:false,perPage:3});
+			
+			$('.datepicker').datepicker();
+			
+			$(".search").keyup(function () {
+    var searchTerm = $(".search").val();
+    var listItem = $('.results tbody').children('tr');
+    var searchSplit = searchTerm.replace(/ /g, "'):containsi('")
+    
+  $.extend($.expr[':'], {'containsi': function(elem, i, match, array){
+        return (elem.textContent || elem.innerText || '').toLowerCase().indexOf((match[3] || "").toLowerCase()) >= 0;
+    }
+  });
+    
+  $(".results tbody tr").not(":containsi('" + searchSplit + "')").each(function(e){
+    $(this).attr('visible','false');
+  });
+
+  $(".results tbody tr:containsi('" + searchSplit + "')").each(function(e){
+    $(this).attr('visible','true');
+  });
+
+  var jobCount = $('.results tbody tr[visible="true"]').length;
+    $('.counter').text(jobCount + ' item');
+
+  if(jobCount == '0') {$('.no-result').show();}
+    else {$('.no-result').hide();}
+		  });
+			
+		})
+		</script>
+	</body>
+</html>
